@@ -15,8 +15,7 @@
           </div>
           <vue-perfect-scrollbar
             :settings="perfectScrollbarSettings"
-            class="sidebar-menu-list scroll-area"
-          >
+            class="sidebar-menu-list scroll-area">
             <!-- Filters -->
             <b-list-group class="list-group-filters">
               <b-list-group-item

@@ -36,8 +36,7 @@
       :pagination-options="{
         enabled: true,
         perPage:pageLength
-      }"
-    >
+      }">
       <template
         slot="table-row"
         slot-scope="props"

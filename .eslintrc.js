@@ -3,19 +3,30 @@ module.exports = {
   env: {
     node: true,
   },
-  extends: ['plugin:vue/recommended', '@vue/airbnb'],
+  'extends': [
+    'plugin:vue/vue3-essential',
+    'eslint:recommended',
+    '@vue/typescript/recommended'
+  ],
   parserOptions: {
-    parser: 'babel-eslint',
+    ecmaVersion: 2020
   },
   rules: {
+    indent: ['error', 2, { "MemberExpression": 1 }],
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-
-    semi: ['error', 'never'],
-    'max-len': 'off',
-    'linebreak-style': 'off',
-    camelcase: ['error', { properties: 'never', ignoreDestructuring: true, ignoreImports: true }],
-    'arrow-parens': ['error', 'as-needed'],
-    'vue/multiline-html-element-content-newline': 'off',
+    'vue/no-deprecated-slot-attribute': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
   },
+  overrides: [
+    {
+      files: [
+        '**/__tests__/*.{j,t}s?(x)',
+        '**/tests/unit/**/*.spec.{j,t}s?(x)'
+      ],
+      env: {
+        jest: true
+      }
+    }
+  ]
 }

@@ -5,8 +5,7 @@
   >
     <b-table
       :fields="fields"
-      :items="items"
-    >
+      :items="items">
       <template #cell(name)="data">
 
         <!-- `data.value` is the value after formatted by the Formatter -->

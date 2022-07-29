@@ -9,8 +9,7 @@
         :fields="fields"
         striped
         responsive
-        class="mb-0"
-      >
+        class="mb-0">
         <template #cell(show_details)="row">
 
           <!-- As `row.showDetails` is one-way, we call the toggleDetails function on @change -->

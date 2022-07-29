@@ -75,8 +75,7 @@
       <!-- Todo List -->
       <vue-perfect-scrollbar
         :settings="perfectScrollbarSettings"
-        class="todo-task-list-wrapper list-group scroll-area"
-      >
+        class="todo-task-list-wrapper list-group scroll-area">
         <draggable
           v-model="tasks"
           handle=".draggable-task-handle"

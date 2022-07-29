@@ -12,8 +12,7 @@
       <b-button
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         v-b-toggle.sidebar-right
-        variant="outline-primary"
-      >
+        variant="outline-primary">
         Toggle Sidebar
       </b-button>
       <b-sidebar
