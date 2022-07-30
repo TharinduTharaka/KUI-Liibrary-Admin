@@ -28,6 +28,7 @@ const router = new VueRouter({
     ...kuiPages,
     ...uiElements,
 
+
     {
       path: '*',
       redirect: 'error-404',
