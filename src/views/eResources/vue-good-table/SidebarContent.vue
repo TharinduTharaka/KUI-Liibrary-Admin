@@ -82,6 +82,33 @@
             </b-form-group>
           </b-col>
 
+          <b-col cols="12">
+            <b-form-group
+                label="Cover Photo"
+                label-for="v-documents">
+              <b-form-file
+                  v-model="file"
+                  placeholder="Choose a file or drop it here..."
+                  drop-placeholder="Drop file here..."
+              />
+
+              <b-card-text class="my-1">
+                Selected file: <strong>{{ file ? file.name : '' }}</strong>
+              </b-card-text>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12">
+            <b-form-group
+                label="Description"
+                label-for="v-description">
+              <b-form-textarea
+                  id="v-description"
+                  placeholder="Description"
+              />
+            </b-form-group>
+          </b-col>
+
           <!-- checkbox -->
           <!--          <b-col cols="12">-->
           <!--            <b-form-group>-->
@@ -125,7 +152,7 @@
 import BCardCode from '@core/components/b-card-code'
 import vSelect from 'vue-select'
 import {
-  BAvatar,
+  BAvatar,BFormTextarea,
   BButton,
   BCard,
   BCardText,
@@ -140,7 +167,7 @@ import {
 export default {
   props: ['title'],
   components: {
-    BAvatar,
+    BAvatar,BFormTextarea,
     BButton,
     BFormGroup,
     BFormInput,

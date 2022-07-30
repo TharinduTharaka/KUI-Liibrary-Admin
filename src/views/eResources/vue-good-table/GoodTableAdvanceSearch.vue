@@ -116,9 +116,9 @@
       <b-table
           :current-page="currentPage"
           :fields="fields"
+          :filter="filter"
           :items="items"
           :per-page="perPage"
-          :filter="filter"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
           :sort-direction="sortDirection"
@@ -141,6 +141,18 @@
         <!-- full detail on click -->
         <template #row-details="row">
           <b-card>
+            <b-row class="mb-2">
+              <b-col>
+                <div class="bg-light-primary rounded-top text-center">
+                  <b-img
+                      :src="require('@/assets/images/illustration/email.svg')"
+                      alt="Meeting Pic"
+                      height="170"
+                  />
+                </div>
+              </b-col>
+            </b-row>
+
 
             <b-row class="mb-2">
               <b-col
@@ -320,6 +332,7 @@ import {
   BFormGroup,
   BFormInput,
   BFormSelect,
+  BImg,
   BPagination,
   BRow,
   BSidebar,
@@ -336,6 +349,7 @@ import vSelect from 'vue-select'
 export default {
   components: {
     BCard,
+    BImg,
     BCardBody,
     vSelect,
     BBadge,
