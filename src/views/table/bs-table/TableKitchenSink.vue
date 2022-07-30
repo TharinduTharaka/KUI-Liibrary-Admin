@@ -129,8 +129,7 @@
           last-number
           prev-class="prev-item"
           next-class="next-item"
-          class="mb-0"
-        >
+          class="mb-0">
           <template #prev-text>
             <feather-icon
               icon="ChevronLeftIcon"

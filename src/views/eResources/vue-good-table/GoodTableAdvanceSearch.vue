@@ -1,5 +1,6 @@
 <template>
 
+
   <b-card>
     <b-button v-b-toggle.sidebar-creat
               style="margin-bottom: 10px"
@@ -14,7 +15,7 @@
         right
         shadow
     >
-      <sidebar-content title='Create'/>
+      <sidebar-content title="Create"/>
     </b-sidebar>
     <b-sidebar
         id="sidebar-edit"
@@ -23,7 +24,7 @@
         right
         shadow
     >
-      <sidebar-content title='Edit'/>
+      <sidebar-content title="Edit"/>
     </b-sidebar>
     <div class="custom-search">
 
@@ -54,23 +55,35 @@
         <b-col md="4">
           <b-form-group>
             <label>Department:</label>
-            <b-form-input
-                class="d-inline-block"
-                placeholder="Search"
-                type="text"
+            <v-select
+                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                :options="departmentOptions"
+                placeholder="Please select"
                 @input="advanceSearch"
             />
+            <!--            <b-form-input-->
+            <!--                class="d-inline-block"-->
+            <!--                placeholder="Search"-->
+            <!--                type="text"-->
+            <!--                @input="advanceSearch"-->
+            <!--            />-->
           </b-form-group>
         </b-col>
         <b-col md="4">
           <b-form-group>
             <label>Resource:</label>
-            <b-form-input
-                class="d-inline-block"
-                placeholder="Search"
-                type="text"
+            <v-select
+                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                :options="resourceOptions"
+                placeholder="Please select"
                 @input="advanceSearch"
             />
+            <!--            <b-form-input-->
+            <!--                class="d-inline-block"-->
+            <!--                placeholder="Search"-->
+            <!--                type="text"-->
+            <!--                @input="advanceSearch"-->
+            <!--            />-->
           </b-form-group>
         </b-col>
         <b-col md="4">
@@ -84,26 +97,33 @@
             />
           </b-form-group>
         </b-col>
-<!--        <b-col md="4">-->
-<!--          <b-form-group>-->
-<!--            <label>Salary:</label>-->
-<!--            <b-form-input-->
-<!--                class="d-inline-block"-->
-<!--                placeholder="Search"-->
-<!--                type="text"-->
-<!--                @input="advanceSearch"-->
-<!--            />-->
-<!--          </b-form-group>-->
-<!--        </b-col>-->
+        <!--        <b-col md="4">-->
+        <!--          <b-form-group>-->
+        <!--            <label>Salary:</label>-->
+        <!--            <b-form-input-->
+        <!--                class="d-inline-block"-->
+        <!--                placeholder="Search"-->
+        <!--                type="text"-->
+        <!--                @input="advanceSearch"-->
+        <!--            />-->
+        <!--          </b-form-group>-->
+        <!--        </b-col>-->
       </b-row>
     </div>
 
     <!-- table -->
     <div>
       <b-table
+          :current-page="currentPage"
           :fields="fields"
           :items="items"
-          class="mb-0"
+          :per-page="perPage"
+          :filter="filter"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          class="position-relative"
+          hover
           responsive
           striped
       >
@@ -121,7 +141,14 @@
         <!-- full detail on click -->
         <template #row-details="row">
           <b-card>
+
             <b-row class="mb-2">
+              <b-col
+                  class="mb-1"
+                  md="4"
+              >
+                <strong>Published Date : </strong>{{ row.item.city }}
+              </b-col>
               <b-col
                   class="mb-1"
                   md="4"
@@ -152,12 +179,25 @@
               >
                 <strong>Status : </strong>{{ row.item.salary }}
               </b-col>
-<!--              <b-col-->
-<!--                  class="mb-1"-->
-<!--                  md="4"-->
-<!--              >-->
-<!--                <strong>Age : </strong>{{ row.item.age }}-->
-<!--              </b-col>-->
+              <b-col
+                  class="mb-1"
+                  md="4"
+              >
+                <strong>Resource Title : </strong>{{ row.item.city }}
+              </b-col>
+              <b-col
+                  class="mb-1"
+                  md="4"
+              >
+                <strong>Description : </strong>{{ row.item.city }}
+              </b-col>
+
+              <!--              <b-col-->
+              <!--                  class="mb-1"-->
+              <!--                  md="4"-->
+              <!--              >-->
+              <!--                <strong>Age : </strong>{{ row.item.age }}-->
+              <!--              </b-col>-->
             </b-row>
             <div class="demo-inline-spacing">
               <b-button
@@ -213,6 +253,53 @@
         </template>
       </b-table>
     </div>
+    <b-card-body class="d-flex justify-content-between flex-wrap pt-0">
+
+      <!-- page length -->
+      <b-form-group
+          class="text-nowrap mb-md-0 mr-1"
+          label="Per Page"
+          label-align="left"
+          label-cols="6"
+          label-for="sortBySelect"
+          label-size="sm"
+      >
+        <b-form-select
+            id="perPageSelect"
+            v-model="perPage"
+            :options="pageOptions"
+            inline
+            size="sm"
+        />
+      </b-form-group>
+
+      <!-- pagination -->
+      <div>
+        <b-pagination
+            v-model="currentPage"
+            :per-page="perPage"
+            :total-rows="totalRows"
+            class="mb-0"
+            first-number
+            last-number
+            next-class="next-item"
+            prev-class="prev-item"
+        >
+          <template #prev-text>
+            <feather-icon
+                icon="ChevronLeftIcon"
+                size="18"
+            />
+          </template>
+          <template #next-text>
+            <feather-icon
+                icon="ChevronRightIcon"
+                size="18"
+            />
+          </template>
+        </b-pagination>
+      </div>
+    </b-card-body>
 
     <!--    <template #code>-->
     <!--      {{ codeAdvance }}-->
@@ -223,9 +310,11 @@
 <script>
 // import BCardCode from '@core/components/b-card-code/BCardCode.vue'
 import {
-  BAvatar,BCard,
+  BAvatar,
   BBadge,
   BButton,
+  BCard,
+  BCardBody,
   BCol,
   BFormCheckbox,
   BFormGroup,
@@ -241,11 +330,14 @@ import { VueGoodTable } from 'vue-good-table'
 import store from '@/store/index'
 import Ripple from 'vue-ripple-directive'
 import SidebarContent from './SidebarContent.vue'
+import vSelect from 'vue-select'
 // import { codeAdvance } from './code'
 /* eslint-disable */
 export default {
   components: {
     BCard,
+    BCardBody,
+    vSelect,
     BBadge,
     BSidebar,
     SidebarContent,
@@ -263,6 +355,7 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     // ToastificationContent,
   },
+  /* eslint-disable */
   directives: {
     'b-toggle': VBToggle,
     Ripple,
@@ -271,46 +364,34 @@ export default {
   data() {
     return {
       pageLength: 5,
+      pageOptions: [3, 5, 10],
+      perPage: 5,
+      totalRows: 1,
+      currentPage: 1,
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
       dir: false,
-      columns: [
-        {
-          label: 'Title',
-          field: 'fullName',
-        },
-        {
-          label: 'Author',
-          field: 'email',
-        },
-        {
-          label: 'Status',
-          field: 'post',
-        },
-        {
-          label: 'Department',
-          field: 'city',
-        },
-        {
-          label: 'Resource',
-          field: 'startDate',
-        },
-        {
-          label: 'Actions',
-          field: 'salary',
-        },
-      ],
+      // filter: {
+      //   resource:null,
+      //   department:null,
+      // },
+      filter: null,
+      resource: '',
+      resourceOptions: ['Thesis', 'General'],
+      department: '',
+      departmentOptions: ['Nursing', 'BMS', 'Psychology', 'Management', 'Acupuncture', 'IT'],
       rows: [],
       searchTerm: '',
       fields: [
         'show_details',
         'id',
-        // {
-        //   key: 'avatar',
-        //   label: 'Avatar'
-        // },
-        'Title',
-        'Author',
-        'Department',
-        'Resource',
+        'published_date',
+        'resource_title',
+        'title',
+        'author',
+        'department',
+        'resource',
         {
           key: 'status',
           label: 'Status'
@@ -321,10 +402,12 @@ export default {
         {
           id: 1,
           avatar: require('@/assets/images/avatars/10-small.png'),
-          Title: 'Korrie O\'Crevy',
-          Author: 'Nuclear Power Engineer',
-          Department: 'kocrevy0@thetimes.co.uk',
-          Resource: 'Krasnosilka',
+          published_date: '01-01-2022',
+          title: 'Korrie O\'Crevy',
+          author: 'Nuclear Power Engineer',
+          department: 'Nursing',
+          resource_title: 'sds fd',
+          resource: 'Thesis',
           status: 2,
         },
         {
@@ -444,6 +527,30 @@ export default {
           experience: '3 Years',
           status: 2,
         },
+        {
+          id: 11,
+          avatar: require('@/assets/images/avatars/10-small.png'),
+          published_date: '01-01-2022',
+          title: 'Korrie O\'Crevy',
+          author: 'Nuclear Power Engineer',
+          department: 'Nursing',
+          resource_title: 'sds fd',
+          resource: 'Thesis',
+          status: 2,
+        },
+        {
+          id: 12,
+          avatar: require('@/assets/images/avatars/1-small.png'),
+          full_name: 'Bailie Coulman',
+          post: 'VP Quality Control',
+          email: 'bcoulman1@yolasite.com',
+          city: 'Hinigaran',
+          start_date: '05/20/2018',
+          salary: '$13633.69',
+          age: '63',
+          experience: '3 Years',
+          status: 2,
+        },
       ],
       /* eslint-disable global-require */
       status: [{
@@ -475,6 +582,10 @@ export default {
       return this.dir
     },
   },
+  mounted() {
+    // Set the initial number of items
+    this.totalRows = this.items.length
+  },
   /* eslint-disable */
   created() {
     this.$http.get('/good-table/advanced-search')
@@ -484,7 +595,7 @@ export default {
   },
   methods: {
     advanceSearch(val) {
-      this.searchTerm = val
+      this.filter = val
     },
     onRowClick(params) {
       console.log(params)

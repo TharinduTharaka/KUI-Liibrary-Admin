@@ -23,14 +23,11 @@ const router = new VueRouter({
   },
   routes: [
     { path: '/', redirect: { name: 'dashboard-ecommerce' } },
-    ...apps,
+
     ...dashboard,
-    ...pages,
     ...kuiPages,
-    ...chartsMaps,
-    ...formsTable,
     ...uiElements,
-    ...others,
+
     {
       path: '*',
       redirect: 'error-404',

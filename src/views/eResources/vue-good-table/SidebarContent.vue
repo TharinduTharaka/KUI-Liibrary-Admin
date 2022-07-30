@@ -121,6 +121,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import BCardCode from '@core/components/b-card-code'
 import vSelect from 'vue-select'
 import {
