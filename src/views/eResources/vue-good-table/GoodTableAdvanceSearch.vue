@@ -24,7 +24,7 @@
         right
         shadow
     >
-      <sidebar-content title="Edit"/>
+      <sidebar-content title="Edit" :id="this.edit_id" :dep="this.edit_department" :edit_title="this.edit_title" :edit_author="this.edit_author" :edit_resource="this.edit_resource" :edit_document="this.edit_document" :edit_cover="this.edit_cover" :edit_description="this.edit_description" :edit_type="this.edit_type"/>
     </b-sidebar>
     <div class="custom-search">
 
@@ -145,9 +145,9 @@
               <b-col>
                 <div class="bg-light-primary rounded-top text-center">
                   <b-img
-                      :src="require('@/assets/images/illustration/email.svg')"
-                      alt="Meeting Pic"
+                      :src="getImage(items[row.index].document_image)"
                       height="170"
+
                   />
                 </div>
               </b-col>
@@ -159,49 +159,55 @@
                   class="mb-1"
                   md="4"
               >
-                <strong>Published Date : </strong>{{ row.item.city }}
+                <strong>Published Date : </strong>{{ row.item.added_date }}
               </b-col>
               <b-col
                   class="mb-1"
                   md="4"
               >
-                <strong>Title : </strong>{{ row.item.full_name }}
+                <strong>Title : </strong>{{ row.item.title }}
               </b-col>
               <b-col
                   class="mb-1"
                   md="4"
               >
-                <strong>Author : </strong>{{ row.item.post }}
+                <strong>Author : </strong>{{ row.item.author }}
               </b-col>
               <b-col
                   class="mb-1"
                   md="4"
               >
-                <strong>Department : </strong>{{ row.item.email }}
+                <strong>Department : </strong>{{ row.item.department }}
               </b-col>
               <b-col
                   class="mb-1"
                   md="4"
               >
-                <strong>Resource : </strong>{{ row.item.city }}
+                <strong>Resource : </strong>{{ row.item.resource }}
               </b-col>
               <b-col
                   class="mb-1"
                   md="4"
               >
-                <strong>Status : </strong>{{ row.item.salary }}
+                <strong>Status : </strong>{{ row.item.status }}
               </b-col>
               <b-col
                   class="mb-1"
                   md="4"
               >
-                <strong>Resource Title : </strong>{{ row.item.city }}
+                <strong>Resource Title : </strong>{{ row.item.resource_title }}
               </b-col>
               <b-col
                   class="mb-1"
                   md="4"
               >
-                <strong>Description : </strong>{{ row.item.city }}
+                <strong>Resource Type : </strong>{{ row.item.type }}
+              </b-col>
+              <b-col
+                  class="mb-1"
+                  md="4"
+              >
+                <strong>Description : </strong>{{ items[row.index].description }}
               </b-col>
 
               <!--              <b-col-->
@@ -222,13 +228,15 @@
               <b-button
                   v-b-toggle.sidebar-edit
                   size="sm"
+                  @click="edit(row.item.id,row.item.title, row.item.department, row.item.resource, row.item.author, row.item.resource_title, items[row.index].document_image, items[row.index].description, row.item.type )"
                   style="margin-left: 10px"
                   variant="outline-primary"
               >
-                edit
+                Edit
               </b-button>
               <b-button
                   size="sm"
+                  @click="deleteResource(row.item.id,5)"
                   style="margin-left: 10px"
                   variant="outline-danger"
               >
@@ -237,18 +245,10 @@
               <b-button
                   size="sm"
                   style="margin-left: 10px"
-                  variant="outline-secondary"
-                  @click="row.id"
-              >
-                draft
-              </b-button>
-              <b-button
-                  size="sm"
-                  style="margin-left: 10px"
                   variant="outline-success"
-                  @click="row.id"
+                  @click="updateEResourceStatus(row.item.id,getStatus(row.item.status),5)"
               >
-                published
+                {{ getStatus(row.item.status) }}
               </b-button>
             </div>
           </b-card>
@@ -344,6 +344,7 @@ import store from '@/store/index'
 import Ripple from 'vue-ripple-directive'
 import SidebarContent from './SidebarContent.vue'
 import vSelect from 'vue-select'
+import axios from "axios";
 // import { codeAdvance } from './code'
 /* eslint-disable */
 export default {
@@ -380,8 +381,17 @@ export default {
       pageLength: 5,
       pageOptions: [3, 5, 10],
       perPage: 5,
-      totalRows: 1,
+      totalRows: 10,
       currentPage: 1,
+      edit_id: '',
+      edit_title: '',
+      edit_department: '',
+      edit_resource: '',
+      edit_author: '',
+      edit_document: '',
+      edit_cover: '',
+      edit_description: '',
+      edit_type: '',
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
@@ -400,8 +410,9 @@ export default {
       fields: [
         'show_details',
         'id',
-        'published_date',
+        'added_date',
         'resource_title',
+        'type',
         'title',
         'author',
         'department',
@@ -413,171 +424,20 @@ export default {
         }],
       /* eslint-disable global-require */
       items: [
-        {
-          id: 1,
-          avatar: require('@/assets/images/avatars/10-small.png'),
-          published_date: '01-01-2022',
-          title: 'Korrie O\'Crevy',
-          author: 'Nuclear Power Engineer',
-          department: 'Nursing',
-          resource_title: 'sds fd',
-          resource: 'Thesis',
-          status: 2,
-        },
-        {
-          id: 2,
-          avatar: require('@/assets/images/avatars/1-small.png'),
-          full_name: 'Bailie Coulman',
-          post: 'VP Quality Control',
-          email: 'bcoulman1@yolasite.com',
-          city: 'Hinigaran',
-          start_date: '05/20/2018',
-          salary: '$13633.69',
-          age: '63',
-          experience: '3 Years',
-          status: 2,
-        },
-        {
-          id: 3,
-          avatar: require('@/assets/images/avatars/9-small.png'),
-          full_name: 'Stella Ganderton',
-          post: 'Operator',
-          email: 'sganderton2@tuttocitta.it',
-          city: 'Golcowa',
-          start_date: '03/24/2018',
-          salary: '$13076.28',
-          age: '66',
-          experience: '6 Years',
-          status: 5,
-        },
-        {
-          id: 4,
-          avatar: require('@/assets/images/avatars/3-small.png'),
-          full_name: 'Dorolice Crossman',
-          post: 'Cost Accountant',
-          email: 'dcrossman3@google.co.jp',
-          city: 'Paquera',
-          start_date: '12/03/2017',
-          salary: '$12336.17',
-          age: '22',
-          experience: '2 Years',
-          status: 2,
-        },
-        {
-          id: 5,
-          avatar: require('@/assets/images/avatars/4-small.png'),
-          full_name: 'Harmonia Nisius',
-          post: 'Senior Cost Accountant',
-          email: 'hnisius4@gnu.org',
-          city: 'Lucan',
-          start_date: '08/25/2017',
-          salary: '$10909.52',
-          age: '33',
-          experience: '3 Years',
-          status: 2,
-        },
-        {
-          id: 6,
-          avatar: require('@/assets/images/avatars/5-small.png'),
-          full_name: 'Genevra Honeywood',
-          post: 'Geologist',
-          email: 'ghoneywood5@narod.ru',
-          city: 'Maofan',
-          start_date: '06/01/2017',
-          salary: '$17803.80',
-          age: '61',
-          experience: '1 Year',
-          status: 1,
-        },
-        {
-          id: 7,
-          avatar: require('@/assets/images/avatars/7-small.png'),
-          full_name: 'Eileen Diehn',
-          post: 'Environmental Specialist',
-          email: 'ediehn6@163.com',
-          city: 'Lampuyang',
-          start_date: '10/15/2017',
-          salary: '$18991.67',
-          age: '59',
-          experience: '9 Years',
-          status: 3,
-        },
-        {
-          id: 8,
-          avatar: require('@/assets/images/avatars/9-small.png'),
-          full_name: 'Richardo Aldren',
-          post: 'Senior Sales Associate',
-          email: 'raldren7@mtv.com',
-          city: 'Skoghall',
-          start_date: '11/05/2016',
-          salary: '$19230.13',
-          age: '55',
-          experience: '5 Years',
-          status: 3,
-        },
-        {
-          id: 9,
-          avatar: require('@/assets/images/avatars/2-small.png'),
-          full_name: 'Allyson Moakler',
-          post: 'Safety Technician',
-          email: 'amoakler8@shareasale.com',
-          city: 'Mogilany',
-          start_date: '12/29/2018',
-          salary: '$11677.32',
-          age: '39',
-          experience: '9 Years',
-          status: 5,
-        },
-        {
-          id: 10,
-          avatar: require('@/assets/images/avatars/6-small.png'),
-          full_name: 'Merline Penhalewick',
-          post: 'Junior Executive',
-          email: 'mpenhalewick9@php.net',
-          city: 'Kanuma',
-          start_date: '04/19/2019',
-          salary: '$15939.52',
-          age: '23',
-          experience: '3 Years',
-          status: 2,
-        },
-        {
-          id: 11,
-          avatar: require('@/assets/images/avatars/10-small.png'),
-          published_date: '01-01-2022',
-          title: 'Korrie O\'Crevy',
-          author: 'Nuclear Power Engineer',
-          department: 'Nursing',
-          resource_title: 'sds fd',
-          resource: 'Thesis',
-          status: 2,
-        },
-        {
-          id: 12,
-          avatar: require('@/assets/images/avatars/1-small.png'),
-          full_name: 'Bailie Coulman',
-          post: 'VP Quality Control',
-          email: 'bcoulman1@yolasite.com',
-          city: 'Hinigaran',
-          start_date: '05/20/2018',
-          salary: '$13633.69',
-          age: '63',
-          experience: '3 Years',
-          status: 2,
-        },
+
       ],
       /* eslint-disable global-require */
       status: [{
-        1: 'Current',
+        published: 'Published',
         2: 'Professional',
-        3: 'Rejected',
+        draft: 'Draft',
         4: 'Resigned',
         5: 'Applied',
       },
         {
-          1: 'light-primary',
+          published: 'light-primary',
           2: 'light-success',
-          3: 'light-danger',
+          draft: 'light-danger',
           4: 'light-warning',
           5: 'light-info',
         }],
@@ -598,30 +458,76 @@ export default {
   },
   mounted() {
     // Set the initial number of items
-    this.totalRows = this.items.length
+
   },
   /* eslint-disable */
   created() {
-    this.$http.get('/good-table/advanced-search')
-        .then(res => {
-          this.rows = res.data
+
+    fetch("http://localhost:8081/resource/get-all-info?page=1&limit=2000&sort=tt")
+        .then(async response => {
+          const data = await response.json();
+          this.items = data.data.items;
+          this.totalRows = data.data.total;
         })
+        .catch(error => {
+          this.errorMessage = error;
+          console.error("There was an error!", error);
+        })
+
+
   },
   methods: {
     advanceSearch(val) {
       this.filter = val
     },
+    edit(val,title, department, resource, author, document, cover, description, type) {
+
+      this.edit_id = val
+      this.edit_title = title
+      this.edit_department = department
+      this.edit_resource = resource
+      this.edit_author = author
+      this.edit_document = document
+      this.edit_cover = cover
+      this.edit_description = description
+      this.edit_type = type
+
+      console.log('gggg')
+      console.log(type)
+    },
+    getStatus(val) {
+      if (val == 'draft')
+        return 'published'
+      else
+        return 'draft'
+    },
+    getImage(val) {
+
+      var url = "C:/Users/Thamindu H/Desktop/library/library/uploadedFiles/50_1.jpg"
+      console.log(val)
+      return require('C:/Users/Thamindu H/Desktop/library/library/uploadedFiles/50_1.jpg')
+
+    },
+    deleteResource(data,updated_user) {
+      axios.delete("http://localhost:8081/resource/delete-eresource",
+          { params: { data,updated_user }})
+          .then(response => window.location.reload());
+    },
+    updateEResourceStatus(data, status,updated_user) {
+      axios.put("http://localhost:8081/resource/update-eresource-status", null,
+          { params: { data, status, updated_user }})
+          .then(response => window.location.reload());
+    },
+    getData() {
+      axios.get("http://localhost:8081/resource/get-all-info?page=1&limit=20&sort=tt")
+          .then(response => {
+            const data = response.json();
+            this.items = data.data.items;
+          });
+    },
     onRowClick(params) {
       console.log(params)
-      // this.$toast({
-      //   component: SidebarContent,
-      //   props: {
-      //     title: `Hello user! You have clicked on row ${params.row.id}`,
-      //     icon: 'UserIcon',
-      //     variant: 'success',
-      //   },
-      // })
-    },
+    }
   },
 }
 </script>

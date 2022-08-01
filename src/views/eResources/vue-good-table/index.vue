@@ -243,7 +243,7 @@ export default {
     },
   },
   created() {
-    this.$http.get('/good-table/advanced-search')
+    this.$http.get('/good-table/advadccscnced-search')
         .then(res => { this.rows = res.data })
   },
   methods: {
